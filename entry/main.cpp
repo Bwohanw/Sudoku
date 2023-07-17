@@ -3,5 +3,6 @@
 
 int main() {
     Sudoku sudoku = Sudoku();
+    sudoku.makeTestStartingBoard();
     sudoku.printGrid();
 }
