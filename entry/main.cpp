@@ -4,5 +4,7 @@
 int main() {
     Sudoku sudoku = Sudoku();
     sudoku.makeTestStartingBoard();
-    sudoku.printGrid();
+    sudoku.printBoard();
+    sudoku.solveBoard();
+    sudoku.printBoard();
 }

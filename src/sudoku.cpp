@@ -1,6 +1,7 @@
 #include "sudoku.h"
 #include <iostream>
 #include <cstdlib>
+#include <utility>
 //#include <sstream>
 
 
@@ -77,6 +78,15 @@ bool Sudoku::solveBoard() {
 }
 
 
+bool Sudoku::isFullBoard() {
+    for (unsigned int i = 0; i < 9; i++) {
+        for (unsigned int j = 0; j < 9; j++) {
+            if (solvedBoard[i][j] == 0) return false;
+        }
+    }
+    return true;
+}
+
 bool Sudoku::isValidPos(unsigned int row, unsigned int col) {
     //checks the position is not a starting position or an empty square
     if (solvedBoard[row][col] <= 0) return true;
@@ -85,15 +95,15 @@ bool Sudoku::isValidPos(unsigned int row, unsigned int col) {
 }
 
 bool Sudoku::validBox(unsigned int checkingrow, unsigned int checkingcol) {
-    unsigned int startingrow = row - (row % 3);
-    unsigned int startingcol = col - (col % 3);
+    unsigned int startingrow = checkingrow - (checkingrow % 3);
+    unsigned int startingcol = checkingcol - (checkingcol % 3);
     int element = solvedBoard[checkingrow][checkingcol];
     for (unsigned int i = 0; i < 3; i++) {
         for (unsigned int j = 0; j < 3; j++) {
             unsigned int row = startingrow + i;
             unsigned int col = startingcol + j;
             if (row != checkingrow && col != checkingcol) {
-                if (solvedBoard[row][col] == element) return false;
+                if (std::abs(solvedBoard[row][col]) == element) return false;
             }
         }
     }
@@ -103,7 +113,7 @@ bool Sudoku::validBox(unsigned int checkingrow, unsigned int checkingcol) {
 bool Sudoku::validCol(unsigned int checkingrow, unsigned int checkingcol) {
     for (unsigned int i = 0; i < 9; i++) {
         if (i != checkingrow) {
-            if (solvedBoard[i][checkingcol] == solvedBoard[checkingrow][checkingcol]) return false;
+            if (std::abs(solvedBoard[i][checkingcol]) == solvedBoard[checkingrow][checkingcol]) return false;
         }
     }
     return true;
@@ -113,7 +123,7 @@ bool Sudoku::validCol(unsigned int checkingrow, unsigned int checkingcol) {
 bool Sudoku::validRow(unsigned int checkingrow, unsigned int checkingcol) {
     for (unsigned int i = 0; i < 9; i++) {
         if (i != checkingcol) {
-            if (solvedBoard[checkingrow][i] == solvedBoard[checkingrow][checkingcol]) return false;
+            if (std::abs(solvedBoard[checkingrow][i]) == solvedBoard[checkingrow][checkingcol]) return false;
         }
     }
     return true;
@@ -128,6 +138,39 @@ bool Sudoku::isValidBoard() {
     return true;
 }
 
-bool Sudoku::solveBoard(unsigned int row, unsigned int col) {
+std::pair<unsigned int, unsigned int> Sudoku::nextPosition(unsigned int row, unsigned int col) {
+    if (row == 8 && col == 8) {
+        return std::make_pair(9,9);
+    }
+    row++;
+    if (row >= 9) {
+        col++;
+        row = 0;
+    }
+    return std::make_pair(row, col);
+}
 
+bool Sudoku::solveBoard(unsigned int row, unsigned int col) {
+    if (row == 9 || col == 9) return true;
+    if (isFullBoard()) {
+        //if (isValidBoard()) return true;
+        return true;
+    }
+    if (solvedBoard[row][col] < 0) {
+        std::pair<unsigned int, unsigned int> next = nextPosition(row, col);
+        return solveBoard(next.first, next.second);
+    }
+    for (int i = 1; i <= 9; i++) {
+        setPosition(i,row, col);
+        if (!isValidPos(row, col)) {
+            erasePosition(row, col);
+            continue;
+        }
+        std::pair<unsigned int, unsigned int> next = nextPosition(row, col);
+        if (solveBoard(next.first, next.second)) {
+            return true;
+        }
+        erasePosition(row, col);
+    }
+    return false;
 }

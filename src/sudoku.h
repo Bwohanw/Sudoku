@@ -4,7 +4,7 @@
 #include <iostream>
 //#include <sstream>
 #include <string>
-
+#include <utility>
 class Sudoku {
     public:
     Sudoku();
@@ -32,13 +32,16 @@ class Sudoku {
 
 
     bool validBox(unsigned int checkingrow, unsigned int checkingcol);
-    bool validCol(unsigned int checkingrow, unsigned int checkingcol)
-    bool validRow(unsigned int checkingrow, unsigned int checkingcol)
+    bool validCol(unsigned int checkingrow, unsigned int checkingcol);
+    bool validRow(unsigned int checkingrow, unsigned int checkingcol);
 
 
     bool isValidPos(unsigned int row, unsigned int col);
     bool isValidBoard();
 
+    bool isFullBoard();
+
+    std::pair<unsigned int, unsigned int> nextPosition(unsigned int row, unsigned int col);
 
     bool solveBoard(unsigned int row, unsigned int col);
 
