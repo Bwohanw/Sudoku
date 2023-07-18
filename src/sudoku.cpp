@@ -33,7 +33,7 @@ void Sudoku::printBoard(std::ostream& out = std::cout) {
 }
 
 bool Sudoku::setPosition(int num, unsigned int row, unsigned int col) {
-    if (solvedBoard[row][col] == 0) {
+    if (solvedBoard[row][col] >= 0) {
         solvedBoard[row][col] = num;
         return true;
     }
@@ -151,9 +151,7 @@ std::pair<unsigned int, unsigned int> Sudoku::nextPosition(unsigned int row, uns
 }
 
 bool Sudoku::solveBoard(unsigned int row, unsigned int col) {
-    if (row == 9 || col == 9) return true;
     if (isFullBoard()) {
-        //if (isValidBoard()) return true;
         return true;
     }
     if (solvedBoard[row][col] < 0) {
@@ -161,7 +159,8 @@ bool Sudoku::solveBoard(unsigned int row, unsigned int col) {
         return solveBoard(next.first, next.second);
     }
     for (int i = 1; i <= 9; i++) {
-        setPosition(i,row, col);
+        //only continues if the number can be validly set
+        setPosition(i, row, col);
         if (!isValidPos(row, col)) {
             erasePosition(row, col);
             continue;
